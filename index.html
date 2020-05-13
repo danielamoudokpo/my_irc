@@ -1,0 +1,69 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head> 
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Chat Room</title> 
+
+    <!-- <link rel="stylesheet"  type="text/css" href="style.css">   -->
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js" integrity="sha384-1CmrxMRARb6aLqgBO7yyAxTOQE2AKb9GfXnEo760AUcUmFx3ibVJJAzGytlQcNXd" crossorigin="anonymous"></script>
+    
+        <style>
+        form { padding: 20px; position: fixed; bottom: 0; width: 100%; padding-right: 50px;}
+        #messages { list-style-type: none; margin: 0; padding: 0; width: 100%;}
+        #messages li { padding: 5px 10px; }
+        #messages li:nth-child(odd) { background: rgba(161, 222, 233, 0.705);} 
+    </style>   
+</head> 
+<body> 
+    <br> 
+        <div class="container-fluid">
+            <div class="row">
+              <ul id="messages"></ul>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                  <form action="">
+                    <div class="input-group">
+                        <input id="message" autocomplete="off" type="text" class="form-control" placeholder="Message..." aria-label="Message...">
+                        <span class="input-group-btn">
+                          <button class="btn btn-secondary" type="submit">Send</button>
+                        </span>
+                      </div>
+                  </form>
+                </div>
+              </div>
+          </div>
+          <script src="/socket.io/socket.io.js"></script>
+          <script>
+          $(function () {
+            // var socket = io('/game');
+            var socket = io();
+            $('form').submit((e)=> {
+              // prevent reload
+              e.preventDefault() 
+
+              socket.emit('message', $('#message').val());
+              $('#message').val('');
+              // socket.emit('event','fuck off')
+              return false;
+            });
+            socket.on('connect', ()=>{
+              socket.emit('message', 'new user connected')
+            })
+            socket.on('message', (msg) => {
+              $('#messages').append($('<li>').html(msg))
+              });
+          });
+        </script>
+</body> 
+</html> 
+
+
