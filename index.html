@@ -14,6 +14,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
 
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js" integrity="sha384-1CmrxMRARb6aLqgBO7yyAxTOQE2AKb9GfXnEo760AUcUmFx3ibVJJAzGytlQcNXd" crossorigin="anonymous"></script>
+
     
         <style>
         form { padding: 20px; position: fixed; bottom: 0; width: 100%; padding-right: 50px;}
@@ -44,23 +45,52 @@
           <script src="/socket.io/socket.io.js"></script>
           <script>
           $(function () {
+            var username = prompt('what is your name');
             // var socket = io('/game');
             var socket = io();
             $('form').submit((e)=> {
               // prevent reload
               e.preventDefault() 
+              var message = $('#message').val();
+              // console.log(message);
+              const regex_nick = /^\/nick+\s+\w+$/g;
+              const regex_list = /^\/list$/g;
+              const regex_create = /^\/create+\s+\w+$/g;
+              const regex_delete = /^\/delete+\s+\w+$/g;
+              const regex_part = /^\/part+\s+\w+$/g;
+              const regex_users = /^\/users+\s+\w+$/g;
+              const regex_msg = /^\/msg+\s+\w+\s+[\w\s]+$/g;
+
+              var command=[]
+              // const regex = /([nick])+\s+\w+/g;
+              var command = message.match(regex_msg);
+              console.log(command);
+              // var commandSplit = command[0].split(" ");
+              // console.log(commandSplit[1]);
+
 
               socket.emit('message', $('#message').val());
+              // clean the input
               $('#message').val('');
-              // socket.emit('event','fuck off')
-              return false;
-            });
-            socket.on('connect', ()=>{
-              socket.emit('message', 'new user connected')
-            })
-            socket.on('message', (msg) => {
-              $('#messages').append($('<li>').html(msg))
+                return false;
               });
+
+              // get username
+              socket.emit('name',username);
+
+              // when user is connected
+              socket.on('connect', ()=>{
+                socket.emit('message', username +' is connected')
+              })
+ 
+              // socket.on('disconnect',()=>{
+              //   io.emit('message',username + ' is disconnected');
+              // })
+
+              // create meassages
+              socket.on('message', (msg) => {
+                $('#messages').append($('<li>').html(msg))
+                });
           });
         </script>
 </body> 
