@@ -42,57 +42,10 @@
                 </div>
               </div>
           </div>
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.9.4/qs.min.js" integrity="sha256-ijqLssetA1NMNjZ+w1zaUafQQLm4IW5OoM8O+4tatME=" crossorigin="anonymous"></script>
           <script src="/socket.io/socket.io.js"></script>
-          <script>
-          $(function () {
-            var username = prompt('what is your name');
-            // var socket = io('/game');
-            var socket = io();
-            $('form').submit((e)=> {
-              // prevent reload
-              e.preventDefault() 
-              var message = $('#message').val();
-              // console.log(message);
-              const regex_nick = /^\/nick+\s+\w+$/g;
-              const regex_list = /^\/list$/g;
-              const regex_create = /^\/create+\s+\w+$/g;
-              const regex_delete = /^\/delete+\s+\w+$/g;
-              const regex_part = /^\/part+\s+\w+$/g;
-              const regex_users = /^\/users+\s+\w+$/g;
-              const regex_msg = /^\/msg+\s+\w+\s+[\w\s]+$/g;
-
-              var command=[]
-              // const regex = /([nick])+\s+\w+/g;
-              var command = message.match(regex_msg);
-              console.log(command);
-              // var commandSplit = command[0].split(" ");
-              // console.log(commandSplit[1]);
-
-
-              socket.emit('message', $('#message').val());
-              // clean the input
-              $('#message').val('');
-                return false;
-              });
-
-              // get username
-              socket.emit('name',username);
-
-              // when user is connected
-              socket.on('connect', ()=>{
-                socket.emit('message', username +' is connected')
-              })
- 
-              // socket.on('disconnect',()=>{
-              //   io.emit('message',username + ' is disconnected');
-              // })
-
-              // create meassages
-              socket.on('message', (msg) => {
-                $('#messages').append($('<li>').html(msg))
-                });
-          });
-        </script>
+          <script src="script.js" charset="UTF-8" ></script>
+         
 </body> 
 </html> 
 

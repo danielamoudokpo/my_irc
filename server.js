@@ -1,3 +1,4 @@
+const path = require('path')
 const express = require('express');
 const http =  require('http');
 const socket = require('socket.io');
@@ -11,26 +12,32 @@ var users = [];
 
 
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
+    res.sendFile(__dirname + '/public/index.html');
   });
+
+  app.use(express.static(path.join(__dirname,'public'))); 
 
 // connection au server
 io.on('connection', (socket) => {
-      // console.log('a user connected');
-    var username
 
-    var user;
+  socket.on('joinRoom',({username,room}) =>{
+    // console.log('lp');
+              // when user is connected
 
+    socket.emit('message', username +' is connected to the chat ')
 
-        socket.on('name', (username)=>{ 
+    //  push all user into array
         users.push(username);
         console.log('username is: '+ username);  
 
         console.log(users); 
         // user = users.toString();
         // console.log(user);     
-    }) 
+    console.log(username);
 
+  })
+      console.log('a user connected');
+      
       socket.on('message', (msg) => {      
         console.log('message: ' + msg); 
         io.emit('message',msg);
@@ -38,13 +45,13 @@ io.on('connection', (socket) => {
 
 
       socket.on('disconnect', () => {  
-        console.log(user);     
-         io.emit('message','user disconnected')  
-      }); 
+        // console.log(user);     
+         io.emit('message',`An user has disconnected`)  
+      });
           
   });
 
-//   create a new chennal exp
+  // create a new chennal exp
 
     // const  game = io.of('/game')
 
