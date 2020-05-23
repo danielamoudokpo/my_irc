@@ -11,8 +11,10 @@ $(document).ready(function(){
         
         // var socket = io('/game');
         var socket = io();
-        socket.emit('joinRoom',{username,room})
+        console.log(username,room);
 
+        socket.emit('joinRoom',{username,room})
+        
         $('form').submit((e)=> {
           // prevent reload
             e.preventDefault() 
@@ -33,7 +35,7 @@ $(document).ready(function(){
             // var commandSplit = command[0].split(" ");
             // console.log(commandSplit[1]);
 
-            socket.emit('message', $('#message').val());
+            socket.emit('cmessage', $('#message').val());
             // clean the input
             $('#message').val('');
                 return false;
