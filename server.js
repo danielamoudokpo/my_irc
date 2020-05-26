@@ -9,6 +9,7 @@ var server = http.Server(app);
 var io = socket(server);
  
 var users = []; 
+var rooms = []
 var id 
 
 
@@ -22,39 +23,100 @@ app.get('/', (req, res) => {
 io.on('connection', (socket) => {
 
   socket.on('joinRoom',({username,room}) =>{
-    // console.log(username,room);
-              // when user is connected
-    let id = socket.id
-                 //  push all user into array
-        users.push({username,room,id});
-        // console.log('username is: '+ username);  
 
-        // console.log(users); 
-        // // user = users.toString();
-        console.log(users);     
-        // console.log(users[0].room);
-        console.log( users.length );
+    // get id when user is connected
+            let id = socket.id
 
-        console.log(room);
-        
-        socket.join(room)
+    //  push all user into array
+         users.push({username,room,id});
+         // console.log('username is: '+ username);   
+      
+         socket.join(room)
+ 
+         socket.emit('message',' welcome to '+room)
 
-        io.to(room).emit('message',' welcom to '+room)
+ 
+         io.to(room).emit('message', username +' is connected to the chat')
 
-        socket.emit('message', username +' is connected to the chat')
+         socket.emit('message','Bonjour everybody')
 
-        socket.on('cmessage', (msg) => {      
-          console.log('message: ' + msg); 
-          io.to(room).emit('message',msg);
-        });   
-  }) 
-      console.log('a user connected');
-       
-      socket.on('disconnect', (room) => {  
-        // console.log(user);     
+  
+         socket.on('cmessage', (msg) => {      
+           console.log('message: ' + msg); 
+           io.to(room).emit('message',msg);
+           
+         }); 
+
+       socket.emit('room',room);
+
+      //  socket.on('typing', username=> {
+      //   //  console.log('sss');
+         
+      //   // io.emit('typing', username);
+      // });
+
+
+    socket.on('roomCreated', (room)=>{
+
+      var found = rooms.find(element => element = room);
+
+      if (found !== room) {
+        rooms.push(room);
+        // console.log(rooms);
+
+        io.emit('message' ,'A new channel is created')
+
+        io.emit('roomCreated',room);
+      }else{
+
+        socket.emit('message' ,' channel already exist')
+      }
+    
+    })  
+    
+    socket.on('roomDeleted', (room)=>{
+
+      var found = rooms.find(element => element = room);
+
+      if (room === found) {
+        // console.log('del');
+        const index = rooms.indexOf(found);
+        if (index > -1) {
+          rooms.splice(index, 1);
+        }
+
+        io.emit('message' ,`The ${found} channnel has been deleted`)
+
+      }
+      // console.log(rooms);
+      
+      io.emit('roomDeleted',room);
+
+    })
+
+    // socket.on('roomUsers',(room)=>{
+
+      // console.log(room);
+
+    //   var ros = io.sockets.clients(room).length;
+
+    //   // console.log(ros);
+    //   // const userCount = io.sockets.clients(roomName).length
+
+      
+      
+
+    // })
+     
+         
+  })  
+  // console.log(users); 
+      socket.on('disconnect', () => {  
+        // console.log('ko');     
         io.emit('message',`An user has disconnected`)  
-      });
-          
+      }); 
+      // console.log('a user connected');
+            
   });
 
     
